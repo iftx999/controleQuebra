@@ -17,21 +17,18 @@ public class AreaController {
     @Autowired
     private AreaService areaService;
 
-    // Criar uma nova área
     @PostMapping
     public ResponseEntity<Area> criarArea(@RequestBody Area area) {
         Area novaArea = areaService.salvarArea(area);
         return ResponseEntity.ok(novaArea);
     }
 
-    // Listar todas as áreas
     @GetMapping
     public ResponseEntity<List<Area>> listarAreas() {
         List<Area> areas = areaService.listarAreas();
         return ResponseEntity.ok(areas);
     }
 
-    // Buscar área por ID
     @GetMapping("/{id}")
     public ResponseEntity<Area> buscarAreaPorId(@PathVariable Long id) {
         Optional<Area> area = areaService.buscarPorId(id);
@@ -39,7 +36,6 @@ public class AreaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Atualizar uma área existente
     @PutMapping("/{id}")
     public ResponseEntity<Area> atualizarArea(@PathVariable Long id, @RequestBody Area areaAtualizada) {
         try {
@@ -50,7 +46,6 @@ public class AreaController {
         }
     }
 
-    // Deletar área por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarArea(@PathVariable Long id) {
         areaService.deletarArea(id);

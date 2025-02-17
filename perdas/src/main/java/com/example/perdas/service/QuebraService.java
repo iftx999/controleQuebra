@@ -1,11 +1,14 @@
 package com.example.perdas.service;
 
 import com.example.perdas.model.Funcionario;
+import com.example.perdas.model.Item;
 import com.example.perdas.model.Quebra;
 import com.example.perdas.repository.FuncionarioRepository;
+import com.example.perdas.repository.ItemRepository;
 import com.example.perdas.repository.QuebraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -18,8 +21,21 @@ public class QuebraService {
     @Autowired
     private FuncionarioRepository funcionarioRepository;
 
-    // Método para registrar uma nova quebra
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @Transactional
     public Quebra registrarQuebra(Quebra quebra) {
+        Item item = itemRepository.findById(quebra.getItem().getId())
+                .orElseThrow(() -> new RuntimeException("Item não encontrado!"));
+
+        if (item.getQuantidade() < quebra.getQuantidade()) {
+            throw new RuntimeException("Quantidade insuficiente em estoque!");
+        }
+
+        item.setQuantidade(item.getQuantidade() - quebra.getQuantidade());
+        itemRepository.save(item);
+
         return quebraRepository.save(quebra);
     }
 
